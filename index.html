@@ -2,295 +2,511 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LoveGPT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Keerthi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&family=Nunito:wght@800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
+            font-family: 'Quicksand', sans-serif;
+            overflow-x: hidden;
+            overflow-y: auto;
+            min-height: 100dvh; /* Mobile friendly height */
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.5s;
+            padding: 10px;
+            background-color: #fce7f3; /* Pink-100 */
         }
 
-        /* Glassmorphism Container */
-        .chat-container {
+        /* --- STYLES --- */
+        .font-header { font-family: 'Nunito', sans-serif; }
+        .font-script { font-family: 'Dancing Script', cursive; }
+
+        .soft-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px -5px rgba(255, 105, 180, 0.3);
+            border: 2px solid white;
+            transition: all 0.3s ease;
         }
 
-        /* Chat Bubbles */
-        .msg-bot {
-            background-color: #fce7f3; /* pink-100 */
-            color: #9d174d; /* pink-800 */
-            border-bottom-left-radius: 4px;
+        .soft-btn {
+            background: linear-gradient(135deg, #f472b6, #db2777);
+            box-shadow: 0 4px 15px rgba(219, 39, 119, 0.3);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .soft-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(219, 39, 119, 0.2);
         }
 
-        .msg-user {
-            background-color: #ffffff;
-            color: #374151; /* gray-700 */
-            border-bottom-right-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            margin-left: auto; /* Align right */
+        /* Background Patterns */
+        .bg-romantic {
+            background-color: #fce7f3;
+            background-image: radial-gradient(#fbcfe8 20%, transparent 20%),
+                              radial-gradient(#fbcfe8 20%, transparent 20%);
+            background-position: 0 0, 25px 25px;
+            background-size: 50px 50px;
         }
 
-        /* Typing Indicator Animation */
-        .typing-dot {
-            animation: bounce 1.4s infinite ease-in-out both;
-            background-color: #db2777; /* pink-600 */
+        .bg-prank {
+            background-color: #fef08a; /* Yellow */
+            background-image: repeating-linear-gradient(
+                -45deg,
+                #fde047,
+                #fde047 20px,
+                #fef08a 20px,
+                #fef08a 40px
+            );
+        }
+
+        /* Bunny Animations */
+        .ear-twitch { animation: twitch 3s infinite; transform-origin: bottom center; }
+        @keyframes twitch {
+            0%, 90%, 100% { transform: rotate(0deg); }
+            92% { transform: rotate(-5deg); }
+            94% { transform: rotate(5deg); }
+            96% { transform: rotate(-5deg); }
+            98% { transform: rotate(5deg); }
+        }
+
+        .bunny-hop { animation: hop 0.5s ease-in-out; }
+        @keyframes hop {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        .shake-crazy { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0) rotate(-1deg); }
+            20%, 80% { transform: translate3d(4px, 0, 0) rotate(2deg); }
+            30%, 50%, 70% { transform: translate3d(-8px, 0, 0) rotate(-4deg); }
+            40%, 60% { transform: translate3d(8px, 0, 0) rotate(4deg); }
+        }
+
+        .wiggle:hover { animation: wiggle 0.5s ease-in-out infinite; cursor: pointer; }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+
+        .siren-light { animation: siren 0.5s infinite; }
+        @keyframes siren {
+            0%, 100% { box-shadow: inset 0 0 0 0 rgba(239, 68, 68, 0); }
+            50% { box-shadow: inset 0 0 50px 20px rgba(239, 68, 68, 0.2); }
         }
         
-        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-
-        @keyframes bounce {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
+        .slide-up { animation: slideUp 0.8s ease-out forwards; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Custom Scrollbar */
-        .chat-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-        .chat-scroll::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .chat-scroll::-webkit-scrollbar-thumb {
-            background-color: rgba(0,0,0,0.1);
-            border-radius: 10px;
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #f472b6; border-radius: 10px; }
     </style>
 </head>
-<body class="h-screen w-screen flex items-center justify-center p-0 md:p-4">
+<body id="body-bg" class="bg-romantic relative">
 
-    <div class="chat-container w-full h-full md:max-w-md md:h-[650px] md:rounded-3xl flex flex-col overflow-hidden relative z-10 shadow-none md:shadow-2xl">
+    <canvas id="confetti-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-50"></canvas>
+
+    <!-- Main Container -->
+    <div id="main-container" class="relative z-10 flex flex-col md:flex-row items-center gap-4 md:gap-8 p-2 w-full max-w-5xl my-auto transition-opacity duration-700">
         
-        <!-- Header -->
-        <div class="bg-white/90 p-4 border-b border-pink-100 flex items-center gap-3 shadow-sm z-20">
-            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-500 to-rose-400 flex items-center justify-center text-white shadow-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
-                </svg>
-            </div>
-            <div>
-                <h1 class="font-bold text-gray-800 text-lg">LoveGPT 4.0</h1>
-                <p class="text-xs text-green-500 font-medium flex items-center gap-1">
-                    <span class="w-2 h-2 rounded-full bg-green-500 block"></span> Online
-                </p>
+        <!-- BUNNY CHARACTER AREA -->
+        <div id="bunny-container" class="order-1 w-40 h-40 md:w-72 md:h-72 relative flex-shrink-0 wiggle transition-all duration-300" onclick="bunnyClick()">
+            <svg id="bunny-svg" class="w-full h-full drop-shadow-2xl transition-transform duration-300" viewBox="0 0 200 200">
+                <g transform="translate(100,100)">
+                    
+                    <!-- BODY (Always Visible) -->
+                    <path d="M-40,50 C-40,20 -30,0 0,0 C30,0 40,20 40,50 L40,100 L-40,100 Z" fill="#fff" stroke="#e5e7eb" stroke-width="2"/>
+                    <ellipse cx="0" cy="90" rx="20" ry="15" fill="#fce7f3"/> <!-- Belly -->
+
+                    <!-- EARS (Animated) -->
+                    <g class="ear-twitch">
+                        <path d="M-20,-10 C-30,-60 -50,-80 -25,-90 C-10,-95 0,-70 -5,-10" fill="#fff" stroke="#e5e7eb" stroke-width="2"/>
+                        <path d="M-22,-20 C-28,-55 -40,-70 -25,-75 C-15,-78 -10,-60 -12,-20" fill="#fbcfe8"/>
+                        
+                        <path d="M20,-10 C30,-60 50,-80 25,-90 C10,-95 0,-70 5,-10" fill="#fff" stroke="#e5e7eb" stroke-width="2"/>
+                        <path d="M22,-20 C28,-55 40,-70 25,-75 C15,-78 10,-60 12,-20" fill="#fbcfe8"/>
+                    </g>
+
+                    <!-- HEAD BASE (Always Visible) -->
+                    <circle cx="0" cy="10" r="45" fill="#fff" stroke="#e5e7eb" stroke-width="2"/>
+                    
+                    <!-- FACES (Swapped via JS) -->
+                    
+                    <!-- 0. Cute Face (Default) -->
+                    <g id="face-cute">
+                        <circle cx="-15" cy="0" r="4" fill="#1f2937"/>
+                        <circle cx="15" cy="0" r="4" fill="#1f2937"/>
+                        <circle cx="-17" cy="-2" r="1.5" fill="white"/>
+                        <circle cx="13" cy="-2" r="1.5" fill="white"/>
+                        <path d="M-5,10 Q0,15 5,10" fill="none" stroke="#1f2937" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="-25" cy="15" r="6" fill="#fbcfe8" opacity="0.6"/>
+                        <circle cx="25" cy="15" r="6" fill="#fbcfe8" opacity="0.6"/>
+                        <!-- Hands holding heart -->
+                        <circle cx="-15" cy="50" r="10" fill="#fff" stroke="#e5e7eb" stroke-width="1"/>
+                        <circle cx="15" cy="50" r="10" fill="#fff" stroke="#e5e7eb" stroke-width="1"/>
+                        <path d="M0,45 C-15,35 -30,45 0,70 C30,45 15,35 0,45" fill="#ec4899"/>
+                    </g>
+
+                    <!-- 1. Curious/Confused Face -->
+                    <g id="face-curious" class="hidden">
+                        <circle cx="-15" cy="0" r="4" fill="#1f2937"/>
+                        <circle cx="15" cy="0" r="5" fill="#1f2937"/> <!-- One eye bigger -->
+                        <path d="M-20,-10 L-10,-10" stroke="#1f2937" stroke-width="2"/> <!-- Eyebrow -->
+                        <path d="M10,-12 L20,-8" stroke="#1f2937" stroke-width="2"/> <!-- Raised Eyebrow -->
+                        <circle cx="0" cy="10" r="2" fill="#pink"/>
+                        <path d="M-2,12 L-5,18 M2,12 L5,18" stroke="#1f2937" stroke-width="1.5"/>
+                        <!-- Paws on mouth -->
+                        <circle cx="0" cy="20" r="10" fill="#fff" stroke="#e5e7eb"/>
+                    </g>
+
+                    <!-- 2. Nervous Face -->
+                    <g id="face-nervous" class="hidden">
+                        <circle cx="-15" cy="0" r="4" fill="#1f2937"/>
+                        <circle cx="15" cy="0" r="4" fill="#1f2937"/>
+                        <path d="M-5,15 Q0,10 5,15" fill="none" stroke="#1f2937" stroke-width="2"/> <!-- Worried mouth -->
+                        <!-- Sweat Drop -->
+                        <path d="M30,-20 Q35,-10 30,0 Q25,-10 30,-20" fill="#60a5fa"/>
+                        <!-- Paws Clasping -->
+                        <ellipse cx="0" cy="50" rx="15" ry="10" fill="#fff" stroke="#e5e7eb"/>
+                    </g>
+
+                    <!-- 3. Scared Face -->
+                    <g id="face-scared" class="hidden">
+                        <circle cx="-15" cy="0" r="2" fill="#1f2937"/>
+                        <circle cx="15" cy="0" r="2" fill="#1f2937"/>
+                        <circle cx="-15" cy="0" r="8" fill="none" stroke="#1f2937" stroke-width="1"/>
+                        <circle cx="15" cy="0" r="8" fill="none" stroke="#1f2937" stroke-width="1"/>
+                        <ellipse cx="0" cy="20" rx="5" ry="8" fill="#1f2937"/> <!-- Mouth open -->
+                        <!-- Hands on cheeks -->
+                        <circle cx="-35" cy="15" r="12" fill="#fff" stroke="#e5e7eb"/>
+                        <circle cx="35" cy="15" r="12" fill="#fff" stroke="#e5e7eb"/>
+                    </g>
+
+                    <!-- 4. Prank/Laughing Face -->
+                    <g id="face-prank" class="hidden">
+                        <!-- Laughing eyes -->
+                        <path d="M-20,0 L-10,0 M-15,-5 L-15,5" stroke="#1f2937" stroke-width="3" transform="rotate(45, -15, 0)"/>
+                        <path d="M10,0 L20,0 M15,-5 L15,5" stroke="#1f2937" stroke-width="3" transform="rotate(45, 15, 0)"/>
+                        <!-- Big Grin -->
+                        <path d="M-20,15 Q0,40 20,15 Z" fill="#fff" stroke="#1f2937" stroke-width="2"/>
+                        <!-- Tears of joy -->
+                        <circle cx="-25" cy="5" r="3" fill="#60a5fa"/>
+                        <circle cx="25" cy="5" r="3" fill="#60a5fa"/>
+                    </g>
+                    
+                </g>
+            </svg>
+            
+            <!-- Speech Bubble -->
+            <div id="bunny-speech" class="absolute -top-6 -right-6 md:-top-10 md:-right-10 bg-white px-3 py-1 rounded-xl rounded-bl-none shadow-md text-xs md:text-sm font-bold text-gray-600 opacity-0 transition-opacity duration-300">
+                Hurry up! 🐰
             </div>
         </div>
 
-        <!-- Chat Area -->
-        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 chat-scroll bg-white/50 relative">
-            <!-- Messages will be injected here -->
-        </div>
+        <!-- TEXT CARD -->
+        <div id="text-card" class="order-2 soft-card p-6 md:p-10 w-full text-center relative max-w-lg">
+            
+            <!-- Content Container -->
+            <div id="content-area">
+                <!-- ROMANTIC TEXT (Initial & Steps) -->
+                <div id="text-romantic">
+                    <span class="inline-block bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-[10px] md:text-xs font-bold tracking-wider mb-2 md:mb-4">CONFIDENTIAL ❤️</span>
+                    
+                    <h1 class="font-header text-2xl md:text-5xl text-gray-800 mb-4 md:mb-6 leading-tight">
+                        I have a <span class="text-pink-500 underline decoration-wavy decoration-2">secret</span>...
+                    </h1>
+                    
+                    <div class="min-h-[60px] md:min-h-[80px] flex items-center justify-center">
+                        <p id="step-text" class="text-gray-600 font-medium text-base md:text-lg mb-6 md:mb-8 transition-all duration-300">
+                            Keerthi, I've been hiding this feeling for so long. I really need to tell you that you are...
+                        </p>
+                    </div>
+                    
+                    <button id="step-btn" onclick="nextStep()" class="soft-btn text-white font-bold text-lg md:text-xl py-3 md:py-4 px-8 md:px-10 rounded-2xl w-full transition-transform transform hover:-translate-y-1">
+                        Click to Reveal 🐇
+                    </button>
+                </div>
 
-        <!-- Input Area -->
-        <div class="p-4 bg-white/90 border-t border-pink-100">
-            <form id="chat-form" class="flex gap-2 relative">
-                <input type="text" id="user-input" 
-                    class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-full focus:ring-pink-500 focus:border-pink-500 block p-3.5 pl-5 outline-none transition-all shadow-inner" 
-                    placeholder="Type a message..." autocomplete="off">
-                <button type="submit" 
-                    class="bg-pink-500 hover:bg-pink-600 text-white rounded-full p-3 shadow-lg transition-transform active:scale-95 flex items-center justify-center w-12 h-12 shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                    </svg>
-                </button>
-            </form>
+                <!-- PRANK TEXT (Hidden) -->
+                <div id="text-prank" class="hidden">
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-2 mb-2 md:mb-4 inline-block animate-bounce">
+                        <span class="text-red-600 font-black text-[10px] md:text-xs tracking-widest uppercase">🚨 Husband Alert 🚨</span>
+                    </div>
+
+                    <h1 class="font-header text-3xl md:text-5xl text-gray-900 mb-2 leading-none">
+                        I Love...
+                    </h1>
+                    
+                    <div class="transform rotate-2 bg-yellow-300 text-black px-3 py-1 md:px-4 md:py-2 my-2 md:my-4 inline-block shadow-lg rounded-lg border-2 border-black border-dashed">
+                        <h2 class="font-black text-xl md:text-3xl uppercase">Your Husband! 🤣</h2>
+                    </div>
+                    
+                    <p class="text-gray-700 font-bold text-base md:text-lg mb-4 md:mb-6">
+                        Just kidding!! 🏃💨 <br>
+                        Happy Valentine's Day to the coolest <span class="text-red-500 underline decoration-wavy">married</span> friend!
+                    </p>
+
+                    <!-- Added Sentimental Quote Here -->
+                    <div class="bg-white/60 border border-pink-200 p-4 rounded-xl mb-6 text-left shadow-sm">
+                        <p class="text-gray-600 font-medium text-xs md:text-sm leading-relaxed italic">
+                            "Sometimes love is not flowers, not photos, not one single day called Valentine’s.
+                            Some husbands are bad at showing feelings… but very good at staying.<br><br>
+                            They may forget dates, forget surprises, forget words… But they never forget you.
+                            Because real marriage is not romance for one evening — it is choosing the same person for a lifetime, again and again.<br><br>
+                            Your husband may not celebrate Valentine’s Day… but he chose you for every day.
+                            And trust me — men who stay loyal quietly love deeper than men who perform loudly."
+                        </p>
+                    </div>
+
+                    <button onclick="showFinalMessage()" class="bg-gray-800 hover:bg-gray-900 text-white font-bold text-lg py-3 px-8 rounded-xl w-full shadow-lg transition-transform hover:scale-105">
+                        Forgive Me? 💀
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script>
-        // --- Configuration ---
-        const TARGET_NAME = "keerthi"; // Lowercase for comparison
-        const SUCCESS_MESSAGE = "Keerthi, from the moment I met you, my world became brighter. You are my favorite notification and my happiest thought. Will you be my Valentine? 🌹";
-        const REJECT_MESSAGE = "I'm sorry, my romantic protocols are encrypted. I can only unlock for a specific person. Access Denied. 🔒";
+    <!-- FINAL FULL SCREEN MESSAGE OVERLAY (First Message) -->
+    <div id="final-overlay" class="fixed inset-0 z-[60] bg-white/95 backdrop-blur-md flex flex-col items-center justify-center p-4 hidden opacity-0 transition-opacity duration-1000">
+        <div class="max-w-3xl w-full text-center relative animate-slide-up h-full flex flex-col justify-center">
+            
+            <!-- Decorative Heart Icon -->
+            <div class="mb-4 animate-bounce shrink-0">
+                <span class="text-4xl md:text-6xl">💌</span>
+            </div>
 
-        // --- State Management ---
-        let step = 0; // 0 = Ask Name, 1 = Check Name, 2 = Finished
-        const chatMessages = document.getElementById('chat-messages');
-        const chatForm = document.getElementById('chat-form');
-        const userInput = document.getElementById('user-input');
+            <h1 class="font-header text-2xl md:text-5xl text-pink-600 mb-4 shrink-0">For You, Bestie ❤️</h1>
+            
+            <!-- Scrollable Text Area -->
+            <div class="text-gray-800 font-medium text-base md:text-2xl leading-relaxed space-y-4 md:space-y-6 overflow-y-auto flex-1 px-2 md:px-6 custom-scrollbar text-left md:text-center pb-20">
+                <p>You felt sad because someone didn’t make this day special for you…</p>
+                <p>But listen carefully.</p>
+                <p>In life, not every person who loves you will say it loudly.</p>
+                <p>Some people stay quietly beside you,</p>
+                <p>checking if you ate,</p>
+                <p>listening to your silly talks,</p>
+                <p>standing with you even on your worst mood days.</p>
+                <p>Valentine’s Day is just one date.</p>
+                <p>Real love is the person who never leaves —</p>
+                <p>not as a lover,</p>
+                <p>not as a husband…</p>
+                <p>but as the one soul who decided,</p>
+                <p>“I’ll stay in her life no matter what.”</p>
+                <p>So don’t feel you are unloved today.</p>
+                <p>Because you have me.</p>
+                <p>Not for one day,</p>
+                <p>not for romance…</p>
+                <p>but forever — as your best friend ❤️</p>
+                <!-- Spacer for scrolling -->
+                <div class="h-10"></div>
+            </div>
 
-        // --- Initialization ---
-        window.onload = () => {
-            // Initial Bot Message
-            setTimeout(() => {
-                addBotMessage("Hai");
+            <!-- Fixed Bottom Button -->
+            <div class="absolute bottom-4 left-0 right-0 px-4 md:static md:mt-8">
+                <button onclick="showExtraMessage()" class="soft-btn text-white font-bold text-lg py-3 px-10 rounded-full shadow-xl hover:scale-105 transition-transform w-full md:w-auto">
+                    One Last Thing ✨
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXTRA MESSAGE OVERLAY (Second Message) -->
+    <div id="extra-overlay" class="fixed inset-0 z-[70] bg-gradient-to-br from-pink-50 to-white flex flex-col items-center justify-center p-4 hidden opacity-0 transition-opacity duration-1000">
+        <div class="max-w-2xl w-full text-center relative animate-slide-up h-full flex flex-col justify-center">
+            
+            <div class="mb-4 shrink-0">
+                <span class="text-6xl">✨</span>
+            </div>
+
+            <h1 class="font-header text-3xl md:text-5xl text-gray-800 mb-6 shrink-0">One Favor for me...</h1>
+            
+            <!-- Big Paragraph -->
+            <div class="text-gray-700 font-medium text-lg md:text-xl leading-relaxed space-y-6 px-4 overflow-y-auto flex-1 custom-scrollbar text-justify md:text-center pb-20">
+               <p>shifa. Now can you able to write a paragraph for me now </p>
+               <p>Donn't Delay</p>
+                <div class="h-10"></div>
+            </div>
+
+            <!-- Song Button -->
+            <div class="absolute bottom-6 left-0 right-0 px-4 md:static md:mt-8 bg-white/80 md:bg-transparent py-4 md:py-0 backdrop-blur-md md:backdrop-blur-none">
+                <button id="music-btn" onclick="playNanbiye()" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-lg py-4 px-12 rounded-full shadow-2xl hover:shadow-pink-500/50 transition-all hover:-translate-y-1 w-full md:w-auto flex items-center justify-center gap-2">
+                    <span>'surprise' for you 🎵</span>
+                </button>
                 
-                // Follow up to ask name
-                setTimeout(() => {
-                    showTypingIndicator();
-                    setTimeout(() => {
-                        removeTypingIndicator();
-                        addBotMessage("I am LoveGPT. Before we begin, may I know your name?");
-                    }, 1000);
-                }, 800);
-            }, 600);
+                <p onclick="location.reload()" class="mt-4 text-gray-400 text-sm underline cursor-pointer hover:text-gray-600">
+                    Start Over
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Audio Element -->
+    <!-- ⚠️ IMPORTANT: Replace the 'src' below with the actual link to the Nanbiye song ⚠️ -->
+    <audio id="nanbiye-song" src="Nanbiye.mp3"></audio>
+
+    <script>
+        let myConfetti;
+        let currentStep = 0;
+
+        // Steps mapping text to bunny faces
+        const steps = [
+            { text: "Wait... are you actually ready for this?", btn: "Yes, tell me! 😳", face: "face-curious" },
+            { text: "It might change our friendship forever...", btn: "I don't care! 😤", face: "face-curious" },
+            { text: "Are you 100% sure with your mind?", btn: "YES 100%! 😡", face: "face-nervous" },
+            { text: "Okay... take a deep breath...", btn: "JUST SAY IT! 🤬", face: "face-scared" },
+            { text: "Last chance to turn back...", btn: "CLICK ME ALREADY! 🔪", face: "face-scared" }
+        ];
+
+        window.onload = () => {
+            const canvas = document.getElementById('confetti-canvas');
+            myConfetti = confetti.create(canvas, { resize: true, useWorker: true });
         };
 
-        // --- Event Listeners ---
-        chatForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const text = userInput.value.trim();
-            if (!text) return;
+        function updateBunnyFace(faceId) {
+            ['face-cute', 'face-curious', 'face-nervous', 'face-scared', 'face-prank'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(faceId).classList.remove('hidden');
+        }
 
-            // 1. Add User Message
-            addUserMessage(text);
-            userInput.value = '';
-
-            // 2. Bot Process (with delay for realism)
-            showTypingIndicator();
-            
+        function bunnyClick() {
+            const bunny = document.getElementById('bunny-container');
+            bunny.classList.add('bunny-hop');
+            const bubble = document.getElementById('bunny-speech');
+            bubble.style.opacity = 1;
             setTimeout(() => {
-                removeTypingIndicator();
-                processResponse(text);
-            }, 1500); // 1.5s delay to simulate "thinking"
-        });
+                bunny.classList.remove('bunny-hop');
+                bubble.style.opacity = 0;
+            }, 500);
+        }
 
-        // --- Core Logic ---
-        function processResponse(text) {
-            const cleanText = text.toLowerCase();
+        function nextStep() {
+            const textEl = document.getElementById('step-text');
+            const btnEl = document.getElementById('step-btn');
+            const bunny = document.getElementById('bunny-container');
 
-            if (step === 0) {
-                // User provided name
-                if (cleanText.includes(TARGET_NAME)) {
-                    // Success Path
-                    addBotMessage("Identity Verified: Welcome, Keerthi. ❤️");
-                    
-                    // Add a second message with the quote after a short pause
-                    showTypingIndicator();
-                    setTimeout(() => {
-                        removeTypingIndicator();
-                        addBotMessage(SUCCESS_MESSAGE);
-                        triggerHeartConfetti();
-                        step = 2; // End state
-                    }, 2000);
+            bunny.classList.add('bunny-hop');
+            setTimeout(() => bunny.classList.remove('bunny-hop'), 500);
 
-                } else {
-                    // Fail Path
-                    addBotMessage(REJECT_MESSAGE);
-                    // Reset to ask again? Or stay locked? Let's ask again.
-                    setTimeout(() => {
-                        addBotMessage("Please try again. What is your name?");
-                    }, 2000);
-                }
-            } else if (step === 2) {
-                // Post-success chat (Optional: Generic love bot responses)
-                const romanticReplies = [
-                    "You've made this AI very happy. 🥰",
-                    "Should I play some romantic music?",
-                    "Sending virtual hugs! 🤗",
-                    "Love is in the air (and in the code).",
-                    "💖💖💖"
-                ];
-                const randomReply = romanticReplies[Math.floor(Math.random() * romanticReplies.length)];
-                addBotMessage(randomReply);
-                triggerHeartConfetti();
+            if (currentStep < steps.length) {
+                const stepIndex = currentStep;
+                textEl.style.opacity = 0; 
+                setTimeout(() => {
+                    textEl.innerText = steps[stepIndex].text;
+                    btnEl.innerText = steps[stepIndex].btn;
+                    updateBunnyFace(steps[stepIndex].face);
+                    textEl.style.opacity = 1; 
+                }, 200);
+                currentStep++;
+            } else {
+                triggerPrank();
             }
         }
 
-        // --- UI Functions ---
-        function addUserMessage(text) {
-            const div = document.createElement('div');
-            div.className = 'flex w-full mt-2 space-x-3 max-w-xs ml-auto justify-end';
-            div.innerHTML = `
-                <div>
-                    <div class="msg-user p-3 rounded-l-lg rounded-br-lg">
-                        <p class="text-sm">${escapeHtml(text)}</p>
-                    </div>
-                </div>
-            `;
-            chatMessages.appendChild(div);
-            scrollToBottom();
+        function triggerPrank() {
+            const card = document.getElementById('text-card');
+            const bunny = document.getElementById('bunny-container');
+            
+            card.classList.add('shake-crazy');
+            bunny.classList.add('shake-crazy');
+            document.body.classList.remove('bg-romantic');
+            document.body.classList.add('bg-prank', 'siren-light');
+            updateBunnyFace('face-prank');
+            document.getElementById('text-romantic').style.display = 'none';
+            document.getElementById('text-prank').classList.remove('hidden');
+            launchConfetti();
+            setTimeout(() => {
+                card.classList.remove('shake-crazy');
+                bunny.classList.remove('shake-crazy');
+            }, 500);
         }
 
-        function addBotMessage(text) {
-            const div = document.createElement('div');
-            div.className = 'flex w-full mt-2 space-x-3 max-w-xs';
-            div.innerHTML = `
-                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-pink-500 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <div>
-                    <div class="msg-bot p-3 rounded-r-lg rounded-bl-lg">
-                        <p class="text-sm leading-relaxed">${text}</p>
-                    </div>
-                </div>
-            `;
-            chatMessages.appendChild(div);
-            scrollToBottom();
+        function showFinalMessage() {
+            // 1. Hide the main container
+            const mainContainer = document.getElementById('main-container');
+            mainContainer.style.opacity = '0';
+            setTimeout(() => {
+                mainContainer.style.display = 'none';
+            }, 500);
+
+            // 2. Reset Background
+            document.body.classList.remove('bg-prank', 'siren-light');
+            document.body.classList.add('bg-romantic');
+
+            // 3. Show Final Overlay
+            const overlay = document.getElementById('final-overlay');
+            overlay.classList.remove('hidden');
+            // Trigger reflow
+            void overlay.offsetWidth;
+            overlay.style.opacity = '1';
+            
+            // 4. Soft Confetti
+            launchSoftConfetti();
         }
 
-        function showTypingIndicator() {
-            const div = document.createElement('div');
-            div.id = 'typing-indicator';
-            div.className = 'flex w-full mt-2 space-x-3 max-w-xs';
-            div.innerHTML = `
-                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-pink-500 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <div>
-                    <div class="msg-bot p-4 rounded-r-lg rounded-bl-lg flex items-center gap-1 h-full">
-                        <div class="typing-dot w-2 h-2 rounded-full"></div>
-                        <div class="typing-dot w-2 h-2 rounded-full"></div>
-                        <div class="typing-dot w-2 h-2 rounded-full"></div>
-                    </div>
-                </div>
-            `;
-            chatMessages.appendChild(div);
-            scrollToBottom();
+        function showExtraMessage() {
+            const finalOverlay = document.getElementById('final-overlay');
+            finalOverlay.style.opacity = '0';
+            setTimeout(() => {
+                finalOverlay.classList.add('hidden');
+                
+                const extraOverlay = document.getElementById('extra-overlay');
+                extraOverlay.classList.remove('hidden');
+                void extraOverlay.offsetWidth;
+                extraOverlay.style.opacity = '1';
+                
+                launchSoftConfetti();
+            }, 500);
         }
 
-        function removeTypingIndicator() {
-            const el = document.getElementById('typing-indicator');
-            if (el) el.remove();
+        function playNanbiye() {
+            const audio = document.getElementById('nanbiye-song');
+            const btn = document.getElementById('music-btn');
+            
+            if (audio.paused) {
+                audio.play().then(() => {
+                    btn.innerHTML = "<span>Playing 'Nanbiye'... 🎧</span>";
+                    launchSoftConfetti(); // More confetti on music
+                }).catch(e => {
+                    alert("Please add the song URL in the code! 🎵");
+                    console.log(e);
+                });
+            } else {
+                audio.pause();
+                btn.innerHTML = "<span>Play 'Nanbiye' for you 🎵</span>";
+            }
         }
 
-        function scrollToBottom() {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        function launchConfetti() {
+            const duration = 2500;
+            const end = Date.now() + duration;
+            (function frame() {
+                myConfetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#ef4444', '#facc15', '#000000'] });
+                myConfetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#ef4444', '#facc15', '#000000'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
         }
 
-        function escapeHtml(text) {
-            const map = {
-                '&': '&amp;',
-                '<': '&lt;',
-                '>': '&gt;',
-                '"': '&quot;',
-                "'": '&#039;'
-            };
-            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-        }
-
-        function triggerHeartConfetti() {
-            var defaults = {
-                spread: 360,
-                ticks: 50,
-                gravity: 0,
-                decay: 0.94,
-                startVelocity: 30,
-                shapes: ['heart'],
-                colors: ['#FFC0CB', '#FF69B4', '#FF1493', '#C71585']
-            };
-
-            confetti({
-                ...defaults,
-                particleCount: 40,
-                scalar: 2
-            });
-
-            confetti({
-                ...defaults,
-                particleCount: 10,
-                scalar: 2
-            });
+        function launchSoftConfetti() {
+            const duration = 3000;
+            const end = Date.now() + duration;
+            (function frame() {
+                myConfetti({ particleCount: 2, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#fbcfe8', '#f472b6'], shapes: ['heart'] });
+                myConfetti({ particleCount: 2, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#fbcfe8', '#f472b6'], shapes: ['heart'] });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
         }
     </script>
 </body>
